@@ -22,6 +22,7 @@ function LoginPage(props: LoginPageProps) {
   })
   const [error, setError] = useState(null as any);
   const [showLoading, setShowLoading] = useState(false);
+  const [showRecoverPasswordMessage, setShowRecoverPasswordMessage] = useState(false);
 
   const login = () => {
     setShowLoading(true);
@@ -35,6 +36,20 @@ function LoginPage(props: LoginPageProps) {
       setError(error);
     });
   }
+
+  const recoverPassword = () => {
+    setShowLoading(true);
+    props.authService.recoverPassword(
+      form.email.value
+    ).then(() => {
+      setShowRecoverPasswordMessage(true);
+      setShowLoading(false);
+    }).catch(error => {
+      setError(error);
+      setShowLoading(false);
+    })
+  }
+
   const navigate = useNavigate();
   const goToRegisterPage = () => {
     navigate('/register');
@@ -90,7 +105,8 @@ function LoginPage(props: LoginPageProps) {
           type="button"
           className='clear'
           data-testid="recover-password-button"
-          disabled={!isEmailValid(form.email.value)}>
+          disabled={!isEmailValid(form.email.value)}
+          onClick={recoverPassword}>
           Recuperar senha
         </button>
         <button
@@ -110,6 +126,12 @@ function LoginPage(props: LoginPageProps) {
         </button>
       </form>
       { showLoading && <Loading /> }
+      {
+        showRecoverPasswordMessage &&
+        <div data-testid="recover-password-success-message">
+          Verifique sua caixa de email
+        </div>
+      }
     </main>
   );
 }
