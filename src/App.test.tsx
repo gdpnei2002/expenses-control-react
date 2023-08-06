@@ -2,11 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
+import AuthService from './services/AuthService';
 
 describe('Login', () => {
 
   test('given email, when empty, then show required error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const email = screen.getByTestId('email');
 
@@ -18,7 +19,7 @@ describe('Login', () => {
   })
 
   test('given email, when has value, then hide required error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const email = screen.getByTestId('email');
 
@@ -29,14 +30,14 @@ describe('Login', () => {
   })
 
   test('given email, when field not changed, then hide required error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const requiredError = screen.queryByTestId('email-required');
     expect(requiredError).toBeNull();
   })
 
   test('given email, when invalid, then show invalid error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const email = screen.getByTestId('email');
 
@@ -47,7 +48,7 @@ describe('Login', () => {
   })
 
   test('given password, when empty, then show required error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const password = screen.getByTestId('password');
 
@@ -59,7 +60,7 @@ describe('Login', () => {
   })
 
   test('given password, when has value, then hide required error message', async () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const password = screen.getByTestId('password');
 
@@ -70,7 +71,7 @@ describe('Login', () => {
   })
 
   test('given email, when empty, then disable recover password button', () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const recoverPasswordButton = screen.getByTestId('recover-password-button');
 
@@ -78,7 +79,7 @@ describe('Login', () => {
   })
 
   test('given email, when valid, then enable recover password button', () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const email = screen.getByTestId('email');
     userEvent.type(email, "valid@email.com");
@@ -89,7 +90,7 @@ describe('Login', () => {
   })
 
   test('given form invalid, then disable login button', () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const loginButton = screen.getByTestId('login-button');
 
@@ -97,7 +98,7 @@ describe('Login', () => {
   })
 
   test('given form valid, then enable login button', () => {
-    render(<App />);
+    render(<App authService={new AuthService()} />);
 
     const email = screen.getByTestId('email');
     userEvent.type(email, "valid@email.com");
