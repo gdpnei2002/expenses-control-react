@@ -3,8 +3,13 @@ import { isEmailValid } from './../../helpers/EmailHelper';
 import ValidationError from './../../components/validation-error/ValidationError';
 import './LoginPage.css';
 import { useNavigate } from 'react-router-dom';
+import AuthService from '../../services/AuthService';
 
-function LoginPage() {
+type LoginPageProps = {
+  authService: AuthService;
+}
+
+function LoginPage(props: LoginPageProps) {
 
   const [form, setForm] = useState({
     email: {
@@ -16,12 +21,22 @@ function LoginPage() {
       value: ""
     }
   })
+  const [error, setError] = useState(null as any);
+
+  const login = () => {
+    props.authService.login(
+      form.email.value, form.password.value
+    ).then(() => {
+      navigate('/home');
+    }).catch(error => {
+      setError(error);
+    });
+  }
 
   const navigate = useNavigate();
   const goToRegisterPage = () => {
     navigate('/register');
   }
-
   return (
     <main
       className='centralize'>
@@ -46,7 +61,7 @@ function LoginPage() {
           testId='email-invalid'
           type='email'
           value={form.email.value}/>
-
+        
         <input
           type="password"
           placeholder='Senha'
@@ -62,6 +77,15 @@ function LoginPage() {
           type='required'
           value={form.password.value}/>
 
+        {
+          error &&
+            <div
+              className='error'
+              data-testid="error">
+              {error.message}
+            </div>
+        }
+
         <button
           type="button"
           className='clear'
@@ -73,7 +97,8 @@ function LoginPage() {
           type="button"
           className='solid'
           data-testid="login-button"
-          disabled={!isEmailValid(form.email.value) || !form.password.value}>
+          disabled={!isEmailValid(form.email.value) || !form.password.value}
+          onClick={login}>
           Entrar
         </button>
         <button
@@ -87,5 +112,4 @@ function LoginPage() {
     </main>
   );
 }
-
 export default LoginPage;
