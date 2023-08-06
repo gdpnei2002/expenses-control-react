@@ -2,19 +2,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import RegisterPage from './../register/RegisterPage';
 import AuthService from '../../services/AuthService';
 
 describe('Login', () => {
-
   let authService: AuthServiceMock;
-
   beforeEach(() => {
     authService = new AuthServiceMock();
   })
-
   describe('given email', () => {
-
     test('when empty, then show required error message', () => {
       renderLoginPage();
   
@@ -116,10 +111,7 @@ describe('Login', () => {
   })
   test('given form valid, then enable login button', () => {
     renderLoginPage();
-    const email = screen.getByTestId('email');
-    userEvent.type(email, "valid@email.com");
-    const password = screen.getByTestId('password');
-    userEvent.type(password, "anyValue");
+    fillFormWithValidValues();
     const loginButton = screen.getByTestId('login-button');
     expect(loginButton).not.toBeDisabled();
   })
@@ -129,67 +121,81 @@ describe('Login', () => {
     userEvent.click(registerButton);
     expect(window.location.pathname).toEqual('/register');
   })
+  describe('given user clicks on login button', () => {
+    test('then call login', async () => {
+      authService.response = Promise.resolve({} as any);
+      renderPageAndTryToLogin();
 
-  test('given user clicks on login button, then call login', async () => {
-    authService.response = Promise.resolve({} as any);
+      await waitFor(() => expect(authService.isLoggingIn).toBeTruthy());
+    })
 
-    renderLoginPage();
+    test('then show loading', async () => {
+      authService.response = Promise.resolve({} as any);
 
+      renderPageAndTryToLogin();
+
+      expect(await screen.findByTestId('loading')).not.toBeNull();
+    })
+
+    test('when success, then hide loading', async () => {
+      authService.response = Promise.resolve({} as any);
+
+      renderPageAndTryToLogin();
+
+      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+    })
+
+    test('when success, then go to home page', async () => {
+      authService.response = Promise.resolve({} as any);
+      renderPageAndTryToLogin();
+  
+      await waitFor(() => expect(window.location.pathname).toEqual('/home'));
+    })
+  
+    test('when fail, then show error message', async () => {
+      authService.response = Promise.reject({message: "error"});
+      renderPageAndTryToLogin();
+  
+      expect(await screen.findByTestId('error')).not.toBeNull();
+    })
+
+    test('when fail, then hide loading', async () => {
+      authService.response = Promise.reject({message: "error"});
+
+      renderPageAndTryToLogin();
+
+      await waitFor(() => expect(screen.queryByTestId('loading')).toBeNull());
+    })
+
+    function renderPageAndTryToLogin() {
+      renderLoginPage();
+      fillFormWithValidValues();
+      clickOnLoginButton();
+    }
+  })
+  function fillFormWithValidValues() {
     const email = screen.getByTestId('email');
     userEvent.type(email, "valid@email.com");
     const password = screen.getByTestId('password');
     userEvent.type(password, "anyValue");
-
+  }
+  function clickOnLoginButton() {
     const loginButton = screen.getByTestId('login-button');
     userEvent.click(loginButton);
-
-    await waitFor(() => expect(authService.isLoggingIn).toBeTruthy());
-  })
-
-  test('given user clicks on login button, when success, then go to home page', async () => {
-    authService.response = Promise.resolve({} as any);
-
-    renderLoginPage();
-
-    const email = screen.getByTestId('email');
-    userEvent.type(email, "valid@email.com");
-    const password = screen.getByTestId('password');
-    userEvent.type(password, "anyValue");
-
-    const loginButton = screen.getByTestId('login-button');
-    userEvent.click(loginButton);
-
-    await waitFor(() => expect(window.location.pathname).toEqual('/home'));
-  })
-
-  test('given user clicks on login button, when fail, then show error message', async () => {
-    authService.response = Promise.reject({message: "error"});
-
-    renderLoginPage();
-
-    const email = screen.getByTestId('email');
-    userEvent.type(email, "valid@email.com");
-    const password = screen.getByTestId('password');
-    userEvent.type(password, "anyValue");
-
-    const loginButton = screen.getByTestId('login-button');
-    userEvent.click(loginButton);
-
-    expect(await screen.findByTestId('error')).not.toBeNull();
-  })
-
+  }
   function renderLoginPage() {
     render(
       <BrowserRouter>
         <Routes location={'/'}>
           <Route path='/'
-            element={<LoginPage authService={authService as AuthService} />} />
-          <Route path='/register' element={<RegisterPage />} />
+            element={
+              <LoginPage
+                authService={authService as AuthService} />
+            } />
         </Routes>
       </BrowserRouter>
     );
   }
-
   class AuthServiceMock {
     isLoggingIn = false;
     response: any;
@@ -198,5 +204,4 @@ describe('Login', () => {
       return this.response;
     }
   }
-
 })

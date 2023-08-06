@@ -4,13 +4,12 @@ import ValidationError from './../../components/validation-error/ValidationError
 import './LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../../services/AuthService';
+import Loading from '../../components/loading/Loading';
 
 type LoginPageProps = {
   authService: AuthService;
 }
-
 function LoginPage(props: LoginPageProps) {
-
   const [form, setForm] = useState({
     email: {
       hasChanged: false,
@@ -22,17 +21,20 @@ function LoginPage(props: LoginPageProps) {
     }
   })
   const [error, setError] = useState(null as any);
+  const [showLoading, setShowLoading] = useState(false);
 
   const login = () => {
+    setShowLoading(true);
     props.authService.login(
       form.email.value, form.password.value
     ).then(() => {
+      setShowLoading(false);
       navigate('/home');
     }).catch(error => {
+      setShowLoading(false);
       setError(error);
     });
   }
-
   const navigate = useNavigate();
   const goToRegisterPage = () => {
     navigate('/register');
@@ -76,7 +78,6 @@ function LoginPage(props: LoginPageProps) {
           testId='password-required'
           type='required'
           value={form.password.value}/>
-
         {
           error &&
             <div
@@ -85,7 +86,6 @@ function LoginPage(props: LoginPageProps) {
               {error.message}
             </div>
         }
-
         <button
           type="button"
           className='clear'
@@ -109,6 +109,7 @@ function LoginPage(props: LoginPageProps) {
           Registrar
         </button>
       </form>
+      { showLoading && <Loading /> }
     </main>
   );
 }
