@@ -48,8 +48,9 @@ function App(props: AppProps) {
             <Route
               path='/home'
               element={
-                user ? <HomePage /> : <Navigate to={'/'} />
-              } />
+                user ? <HomePage authService={props.authService} />
+                  : <Navigate to={'/'} />
+                } />
           </Routes>
         </BrowserRouter>
       }
