@@ -14,6 +14,13 @@ export default class AuthService {
         return firebaseAuth.signOut(auth);
     }
     
+    register(email: string, password: string) {
+        return firebaseAuth.createUserWithEmailAndPassword(
+            auth, email, password
+        )
+        .catch(error => Promise.reject(error));
+    }
+    
     recoverPassword(email: string) {
         return firebaseAuth.sendPasswordResetEmail(auth, email);
     }
