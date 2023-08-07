@@ -5,11 +5,11 @@ import './LoginPage.css';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../../services/AuthService';
 import Loading from '../../components/loading/Loading';
+import { useAuthContext } from '../../contexts/auth/AuthContext';
 
-type LoginPageProps = {
-  authService: AuthService;
-}
-function LoginPage(props: LoginPageProps) {
+function LoginPage() {
+
+  const { authService }: {authService: AuthService} = useAuthContext();
   const [form, setForm] = useState({
     email: {
       hasChanged: false,
@@ -24,9 +24,16 @@ function LoginPage(props: LoginPageProps) {
   const [showLoading, setShowLoading] = useState(false);
   const [showRecoverPasswordMessage, setShowRecoverPasswordMessage] = useState(false);
 
-  const login = () => {
+  const startLoadingService = () => {
+    setError(null);
     setShowLoading(true);
-    props.authService.login(
+    setShowRecoverPasswordMessage(false);
+  }
+
+  const login = () => {
+    startLoadingService();
+
+    authService.login(
       form.email.value, form.password.value
     ).then(() => {
       setShowLoading(false);
@@ -38,8 +45,8 @@ function LoginPage(props: LoginPageProps) {
   }
 
   const recoverPassword = () => {
-    setShowLoading(true);
-    props.authService.recoverPassword(
+    startLoadingService();
+    authService.recoverPassword(
       form.email.value
     ).then(() => {
       setShowRecoverPasswordMessage(true);
@@ -54,6 +61,7 @@ function LoginPage(props: LoginPageProps) {
   const goToRegisterPage = () => {
     navigate('/register');
   }
+
   return (
     <main
       className='centralize'>
@@ -135,4 +143,5 @@ function LoginPage(props: LoginPageProps) {
     </main>
   );
 }
+
 export default LoginPage;
