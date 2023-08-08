@@ -3,25 +3,43 @@ import { auth } from '../FirebaseConfig';
 
 export default class AuthService {
 
-    login(email: string, password: string) {
-        return firebaseAuth.signInWithEmailAndPassword(
-            auth, email, password
-        )
-        .catch(error => Promise.reject(error));
+    async register(email: string, password: string) {
+        try {
+            const userCredential = await firebaseAuth.createUserWithEmailAndPassword(auth, email, password);
+            await this.sendVerificationEmail(userCredential.user);
+            return userCredential;
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    async login(email: string, password: string) {
+        try {
+            const userCredential = await firebaseAuth.signInWithEmailAndPassword(auth, email, password);
+            if (!userCredential.user.emailVerified) {
+                throw new Error("E-mail ainda não foi verificado. Por favor, verifique seu e-mail antes de fazer login.");
+            }
+            return userCredential;
+        } catch (error) {
+            return Promise.reject(error);
+        }
     }
 
     logout() {
         return firebaseAuth.signOut(auth);
     }
     
-    register(email: string, password: string) {
-        return firebaseAuth.createUserWithEmailAndPassword(
-            auth, email, password
-        )
-        .catch(error => Promise.reject(error));
-    }
-    
     recoverPassword(email: string) {
         return firebaseAuth.sendPasswordResetEmail(auth, email);
+    }
+
+    async sendVerificationEmail(user: any) {
+        try {
+            if (user) {
+                await firebaseAuth.sendEmailVerification(user);
+            }
+        } catch (error) {
+            console.error("Erro ao enviar o e-mail de verificação:", error);
+        }
     }
 }
