@@ -16,25 +16,27 @@ function HomePage() {
         fetchData();
     }, []);
 
-    const fetchData = async () => {
-        const response = await axios.get(
-            'https://api.airtable.com/v0/appafi3FiS8TEtgKo/User',
-            {
-                headers: {
-                    Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-
-        const records = response.data.records;
-
-        const formattedData = records.map((user: any) => ({
-            name: user.fields.name,
-            email: user.fields.email,
-        }));
-        setUserData(formattedData);
-    };
+    function fetchData() {
+        const url = 'https://api.airtable.com/v0/appafi3FiS8TEtgKo/User';
+        const headers = {
+            Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
+            'Content-Type': 'application/json',
+        };
+    
+        axios.get(url, { headers })
+            .then((response) => {
+                const records = response.data.records;
+                const formattedData = records.map((user: any) => ({
+                    name: user.fields.name,
+                    email: user.fields.email,
+                }));
+                setUserData(formattedData);
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar dados:', error);
+            });
+    }
+    
 
     const logout = () => {
         setIsLoggingOut(true);
