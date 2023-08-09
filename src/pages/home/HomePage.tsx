@@ -10,7 +10,7 @@ function HomePage() {
     const { authService }: { authService: AuthService } = useAuthContext();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const navigate = useNavigate();
-    const [userData, setUserData] = useState<{ name: string; email: string }[]>([]);
+    const [userData, setUserData] = useState<{ name: string; email: string; idHash: string }[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -29,6 +29,7 @@ function HomePage() {
                 const formattedData = records.map((user: any) => ({
                     name: user.fields.name,
                     email: user.fields.email,
+                    idHash: user.fields.idHash,
                 }));
                 setUserData(formattedData);
             })
@@ -58,7 +59,7 @@ function HomePage() {
                 <ul>
                     {userData.map((user, index) => (
                         <li key={index}>
-                            <strong>name:</strong> {user.name} <strong>Email:</strong> {user.email}
+                            <strong>name:</strong> {user.name} <strong>Email:</strong> {user.email} <strong>idHash</strong> {user.idHash}
                         </li>
                     ))}
                 </ul>
