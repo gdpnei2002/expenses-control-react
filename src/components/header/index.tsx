@@ -1,34 +1,52 @@
-import React, {  useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/loading/Loading';
-import { useAuthContext } from '../../contexts/auth/AuthContext';
 import AuthService from '../../services/AuthService';
 import './header.css';
-import axios from 'axios';
 
-function Header() {
-    const { authService }: { authService: AuthService } = useAuthContext();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const navigate = useNavigate();
+interface HeaderProps {
+  authService: AuthService;
+}
 
-    
+function Header({ authService }: HeaderProps) {
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-    const logout = () => {
-        setIsLoggingOut(true);
-        authService.logout().then(() => {
-            setIsLoggingOut(false);
-            navigate('/');
-        });
+  useEffect(() => {
+    const user = authService.getCurrentUser();
+    if (user) {
+      setUserEmail(user.email);
+      console.log( "dentro  do if " + user.email);
     }
+    console.log( "fora do if "+ userEmail);
+    
+  }, [authService]);
 
-    return (
-        <>
-            <header>
-                <button className='clear' onClick={logout}>Sair</button>
-            </header>
-            {isLoggingOut && <Loading />}
-        </>
-    );
+  const logout = async () => {
+    setIsLoggingOut(true);
+    await authService.logout();
+    setIsLoggingOut(false);
+    navigate('/');
+  };
+
+  return (
+    <header>
+      <div className="user-info">
+        {userEmail !== null ? (
+          <>
+            <p>Usuário logado: {userEmail}</p>
+            <button className="clear" onClick={logout}>
+              Sair
+            </button>
+          </>
+        ) : (
+          <p>Carregando...</p>
+        )}
+      </div>
+      {isLoggingOut && <Loading />}
+    </header>
+  );
 }
 
 export default Header;

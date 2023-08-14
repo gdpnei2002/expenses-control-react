@@ -42,4 +42,10 @@ export default class AuthService {
             console.error("Erro ao enviar o e-mail de verificação:", error);
         }
     }
+
+    getCurrentUser() {
+        const user = auth.currentUser;
+        return user;
+    }
+    
 }

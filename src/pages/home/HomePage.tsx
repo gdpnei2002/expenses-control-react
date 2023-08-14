@@ -50,7 +50,7 @@ function HomePage() {
 
     return (
         <>
-        <Header/>
+            <Header authService={authService} />
             <div>
                 <h1>Lista de Usuários</h1>
                 <ul>
