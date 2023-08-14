@@ -24,8 +24,8 @@ function Header({ authService }: HeaderProps) {
   }, [user]);
 
   useEffect(() => {
-      fetchData();
-  }, [userEmail]);
+    fetchData();
+  }, [fetchData]);
 
   const logout = async () => {
     setIsLoggingOut(true);
