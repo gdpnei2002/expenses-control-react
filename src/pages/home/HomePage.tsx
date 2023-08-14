@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Loading from '../../components/loading/Loading';
+import { useEffect, useState } from 'react';
 import { useAuthContext } from '../../contexts/auth/AuthContext';
 import AuthService from '../../services/AuthService';
 import './HomePage.css';
@@ -9,8 +7,6 @@ import Header from '../../components/header';
 
 function HomePage() {
     const { authService }: { authService: AuthService } = useAuthContext();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const navigate = useNavigate();
     const [userData, setUserData] = useState<{ name: string; email: string; idHash: string }[]>([]);
 
     useEffect(() => {
@@ -37,15 +33,6 @@ function HomePage() {
             .catch((error) => {
                 console.error('Erro ao buscar dados:', error);
             });
-    }
-    
-
-    const logout = () => {
-        setIsLoggingOut(true);
-        authService.logout().then(() => {
-            setIsLoggingOut(false);
-            navigate('/');
-        });
     }
 
     return (
