@@ -24,9 +24,7 @@ function Header({ authService }: HeaderProps) {
   }, [user]);
 
   useEffect(() => {
-    if (userEmail) {
       fetchData();
-    }
   }, [userEmail]);
 
   const logout = async () => {
