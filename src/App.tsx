@@ -5,6 +5,7 @@ import RegisterPage from './pages/register/RegisterPage';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Loading from './components/loading/Loading';
 import { useAuthContext } from './contexts/auth/AuthContext';
+import CreateProduct from './pages/admin/createProduct';
 
 function App() {
 
@@ -30,6 +31,11 @@ function App() {
               path='/home'
               element={
                 user ? <HomePage /> : <Navigate to={'/'} />
+              } />
+            <Route
+              path='/createProduct'
+              element={
+                user ? <CreateProduct /> : <Navigate to={'/'} />
               } />
           </Routes>
         </BrowserRouter>
