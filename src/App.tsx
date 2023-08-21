@@ -6,6 +6,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Loading from './components/loading/Loading';
 import { useAuthContext } from './contexts/auth/AuthContext';
 import CreateProduct from './pages/admin/createProduct';
+import AppointmentForm from './pages/agendamento/agendamento';
 
 function App() {
 
@@ -36,6 +37,11 @@ function App() {
               path='/createProduct'
               element={
                 user ? <CreateProduct /> : <Navigate to={'/'} />
+              } />
+            <Route
+              path='/agendamento'
+              element={
+                user ? <AppointmentForm /> : <Navigate to={'/'} />
               } />
           </Routes>
         </BrowserRouter>
