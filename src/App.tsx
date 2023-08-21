@@ -7,6 +7,7 @@ import Loading from './components/loading/Loading';
 import { useAuthContext } from './contexts/auth/AuthContext';
 import CreateProduct from './pages/admin/createProduct';
 import AppointmentForm from './pages/agendamento/Scheduling';
+import AppointmentList from './pages/agendamento/ListScheduling';
 
 function App() {
 
@@ -42,6 +43,11 @@ function App() {
               path='/agendamento'
               element={
                 user ? <AppointmentForm /> : <Navigate to={'/'} />
+              } />
+            <Route
+              path='/lista-de-agendamento'
+              element={
+                user ? <AppointmentList /> : <Navigate to={'/'} />
               } />
           </Routes>
         </BrowserRouter>
