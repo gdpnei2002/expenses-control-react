@@ -33,7 +33,7 @@ const RegisterPage: React.FC = () => {
   
     const config = {
       headers: {
-        Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',    
+        Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
         'Content-Type': 'application/json',
       },
     };
