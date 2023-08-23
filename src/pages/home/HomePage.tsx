@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAuthContext } from '../../contexts/auth/AuthContext';
-import AuthService from '../../services/AuthService';
 import './HomePage.css';
 import axios from 'axios';
-import Header from '../../components/header';
 
 function HomePage() {
-    const { authService }: { authService: AuthService } = useAuthContext();
     const [userData, setUserData] = useState<{ name: string; email: string; idHash: string }[]>([]);
 
     useEffect(() => {

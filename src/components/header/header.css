@@ -1,7 +1,31 @@
 header {
     text-align: right;
 }
+
 header button {
-    margin: 5px;
     width: auto;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    color: white;
+    justify-content: space-between;
+}
+
+.user-info a {
+    margin: 0 2px;
+    color: white;
+    text-decoration: none;
+}
+
+.user-info p {
+    margin: 0;
+}
+
+.clear {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
 }

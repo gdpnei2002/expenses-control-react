@@ -64,6 +64,12 @@ function Header({ authService }: HeaderProps) {
   return (
     <header>
       <div className="user-info">
+        <div>
+          <a href="/home">HOME</a>
+          <a href="/createProduct">createProduct</a>
+          <a href="/agendamento">agendamento</a>
+          <a href="/lista-de-agendamento">lista-de-agendamento</a>
+        </div>
         {userEmail !== null ? (
           <>
             {userData.map((user, index) => (
