@@ -3,7 +3,7 @@ import './HomePage.css';
 import axios from 'axios';
 
 function HomePage() {
-    const [userData, setUserData] = useState<{ name: string; email: string; idHash: string }[]>([]);
+    const [userData, setUserData] = useState<{ id: number; name: string; email: string; idHash: string }[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -20,6 +20,7 @@ function HomePage() {
             .then((response) => {
                 const records = response.data.records;
                 const formattedData = records.map((user: any) => ({
+                    id: user.fields.id,
                     name: user.fields.name,
                     email: user.fields.email,
                     idHash: user.fields.idHash,
@@ -38,6 +39,7 @@ function HomePage() {
                 <table>
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>idHash</th>
@@ -46,6 +48,7 @@ function HomePage() {
                     <tbody>
                         {userData.map((user, index) => (
                             <tr key={index}>
+                                <td>{user.id}</td>
                                 <td>{user.name}</td>
                                 <td>{user.email}</td>
                                 <td>{user.idHash}</td>

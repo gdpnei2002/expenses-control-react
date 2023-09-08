@@ -76,4 +76,8 @@ const AppointmentList: React.FC = () => {
   );
 };
 
+// cria primeiro o dia
+// e cada dia fazer as 8 fields no airtable, uma por hora 
+// será filtrado cada dia pela data
+
 export default AppointmentList;
