@@ -84,6 +84,7 @@ function Header({ authService }: HeaderProps) {
           <p>Carregando...</p>
         )}
       </div>
+      <hr />
       {isLoggingOut && <Loading />}
     </header>
   );
