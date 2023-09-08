@@ -35,13 +35,24 @@ function HomePage() {
         <>
             <div>
                 <h1>Lista de Usuários</h1>
-                <ul>
-                    {userData.map((user, index) => (
-                        <li key={index}>
-                            <strong>name:</strong> {user.name} <strong>Email:</strong> {user.email} <strong>idHash</strong> {user.idHash}
-                        </li>
-                    ))}
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>idHash</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {userData.map((user, index) => (
+                            <tr key={index}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.idHash}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </>
     );
