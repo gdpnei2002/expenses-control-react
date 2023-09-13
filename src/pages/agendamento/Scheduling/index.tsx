@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 
 interface Appointment {
   id: string;
@@ -11,16 +11,20 @@ interface Appointment {
     "11h": boolean;
   };
 }
+
+type FieldsKey = keyof Appointment["fields"];
+
 const AppointmentForm = () => {
   const [clientName, setClientName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [medic, setMedic] = useState("");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    getHours()
-  }, [])
+    getHours();
+  }, []);
 
   async function getHours() {
     try {
@@ -28,42 +32,54 @@ const AppointmentForm = () => {
         "https://api.airtable.com/v0/appafi3FiS8TEtgKo/Appointments",
         {
           headers: {
-            Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
+            Authorization:
+              "Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077",
           },
         }
       );
-  
-      const fetchedAppointments = response.data.records;
+
+      const fetchedAppointments = response.data.records as Appointment[];
       setAppointments(fetchedAppointments);
     } catch (error) {
       console.error("Erro ao buscar os compromissos:", error);
     }
   }
 
-  const handleSubmit = async (e: any) => {
+  const selectHour = async (e: any) => {
     e.preventDefault();
-
+  
+    const checkedFields = {} as Record<FieldsKey, boolean>;
+  
+    // Mapeie os campos e defina seus valores com base nos estados dos checkboxes
+    (["8h", "9h", "10h", "11h"] as FieldsKey[]).forEach((fieldName) => {
+      checkedFields[fieldName] = appointments.some(
+        (appointment) => appointment.fields[fieldName]
+      );
+    });
+  
     const newAppointment = {
       fields: {
         clientName: clientName,
         date: date,
         time: time,
         medic: medic,
+        ...checkedFields, // Adicione os campos com valores calculados
       },
     };
-
+  
     try {
       const response = await axios.post(
         "https://api.airtable.com/v0/appafi3FiS8TEtgKo/Appointments",
         newAppointment,
         {
           headers: {
-            Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
+            Authorization:
+              "Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077",
             "Content-Type": "application/json",
           },
         }
       );
-
+  
       console.log("Appointment created:", response.data);
       setClientName("");
       setDate("");
@@ -73,8 +89,24 @@ const AppointmentForm = () => {
       console.error("Error creating appointment:", error);
     }
   };
+  
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCheckboxChange = (appointmentId: string, fieldName: FieldsKey) => {
+    const updatedAppointments = appointments.map((appointment) => {
+      if (appointment.id === appointmentId) {
+        return {
+          ...appointment,
+          fields: {
+            ...appointment.fields,
+            [fieldName]: !appointment.fields[fieldName],
+          },
+        };
+      }
+      return appointment;
+    });
+
+    setAppointments(updatedAppointments);
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -87,7 +119,7 @@ const AppointmentForm = () => {
   return (
     <div>
       <h2>Agendar Novo Evento</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={selectHour}>
         <label>
           Nome do Cliente:
           <input
@@ -122,7 +154,9 @@ const AppointmentForm = () => {
             onChange={(e) => setTime(e.target.value)}
           />
         </label>
-        <button onClick={openModal} type="submit">Agendar</button>
+        <button onClick={openModal} type="submit">
+          Agendar
+        </button>
       </form>
 
       <ul>
@@ -131,10 +165,19 @@ const AppointmentForm = () => {
             <li key={appointment.id}>
               <strong>ID: {appointment.id}</strong>
               <ul>
-                <li>8h: {appointment.fields["8h"] ? "Checked" : "Unchecked"}</li>
-                <li>9h: {appointment.fields["9h"] ? "Checked" : "Unchecked"}</li>
-                <li>10h: {appointment.fields["10h"] ? "Checked" : "Unchecked"}</li>
-                <li>11h: {appointment.fields["11h"] ? "Checked" : "Unchecked"}</li>
+                {(["8h", "9h", "10h", "11h"] as FieldsKey[]).map((fieldName) => (
+                  <li key={fieldName}>
+                    {fieldName}:{" "}
+                    {appointment.fields[fieldName] ? "Checked" : "Unchecked"}
+                    <input
+                      type="checkbox"
+                      checked={appointment.fields[fieldName]}
+                      onChange={() =>
+                        handleCheckboxChange(appointment.id, fieldName)
+                      }
+                    />
+                  </li>
+                ))}
               </ul>
             </li>
           ))
