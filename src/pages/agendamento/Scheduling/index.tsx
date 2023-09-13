@@ -1,11 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Modal from 'react-modal';
 
+interface Appointment {
+  id: string;
+  fields: {
+    "8h": boolean;
+    "9h": boolean;
+    "10h": boolean;
+    "11h": boolean;
+  };
+}
 const AppointmentForm = () => {
   const [clientName, setClientName] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [medic, setMedic] = useState("");
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
+  useEffect(() => {
+    getHours()
+  }, [])
+
+  async function getHours() {
+    try {
+      const response = await axios.get(
+        "https://api.airtable.com/v0/appafi3FiS8TEtgKo/Appointments",
+        {
+          headers: {
+            Authorization: 'Bearer patfdqTNurL5Vrttj.e0494d984b5b6f4b7a57222e6b926735f47fd7644c4db400d9805a6b36451077',
+          },
+        }
+      );
+  
+      const fetchedAppointments = response.data.records;
+      setAppointments(fetchedAppointments);
+    } catch (error) {
+      console.error("Erro ao buscar os compromissos:", error);
+    }
+  }
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -39,6 +72,16 @@ const AppointmentForm = () => {
     } catch (error) {
       console.error("Error creating appointment:", error);
     }
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -79,8 +122,36 @@ const AppointmentForm = () => {
             onChange={(e) => setTime(e.target.value)}
           />
         </label>
-        <button type="submit">Agendar</button>
+        <button onClick={openModal} type="submit">Agendar</button>
       </form>
+
+      <ul>
+        {appointments.length > 0 ? (
+          appointments.map((appointment) => (
+            <li key={appointment.id}>
+              <strong>ID: {appointment.id}</strong>
+              <ul>
+                <li>8h: {appointment.fields["8h"] ? "Checked" : "Unchecked"}</li>
+                <li>9h: {appointment.fields["9h"] ? "Checked" : "Unchecked"}</li>
+                <li>10h: {appointment.fields["10h"] ? "Checked" : "Unchecked"}</li>
+                <li>11h: {appointment.fields["11h"] ? "Checked" : "Unchecked"}</li>
+              </ul>
+            </li>
+          ))
+        ) : (
+          <li>Nenhum compromisso encontrado.</li>
+        )}
+      </ul>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Exemplo de Modal"
+      >
+        <h2>Meu Modal</h2>
+        <p>Conteúdo do modal...</p>
+        <button onClick={closeModal}>Fechar Modal</button>
+      </Modal>
     </div>
   );
 };
