@@ -50,7 +50,6 @@ const AppointmentForm = () => {
   
     const checkedFields = {} as Record<FieldsKey, boolean>;
   
-    // Mapeie os campos e defina seus valores com base nos estados dos checkboxes
     (["8h", "9h", "10h", "11h"] as FieldsKey[]).forEach((fieldName) => {
       checkedFields[fieldName] = appointments.some(
         (appointment) => appointment.fields[fieldName]
@@ -63,7 +62,7 @@ const AppointmentForm = () => {
         date: date,
         time: time,
         medic: medic,
-        ...checkedFields, // Adicione os campos com valores calculados
+        ...checkedFields,
       },
     };
   
