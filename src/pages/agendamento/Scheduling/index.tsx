@@ -24,7 +24,6 @@ type FieldsKey = keyof Appointment["fields"];
 const AppointmentForm = () => {
   const [clientName, setClientName] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [medic, setMedic] = useState("");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,8 +87,7 @@ const AppointmentForm = () => {
       fields: {
         clientName: clientName,
         date: date,
-        time: time,
-        medic: [selectedMedic ? selectedMedic.id : ""], // Use o ID do médico selecionado
+        medic: [selectedMedic ? selectedMedic.id : ""],
         ...checkedFields,
       },
     };
@@ -110,7 +108,6 @@ const AppointmentForm = () => {
       console.log("Appointment created:", response.data);
       setClientName("");
       setDate("");
-      setTime("");
       setMedic("");
     } catch (error) {
       console.error("Error creating appointment:", error);
@@ -187,14 +184,6 @@ const AppointmentForm = () => {
           />
         </label>
         <br />
-        <label>
-          Hora:
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-          />
-        </label>
         <button onClick={openModal} type="submit">
           Agendar
         </button>
